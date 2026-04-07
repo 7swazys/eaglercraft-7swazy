@@ -165,6 +165,11 @@
             cursor: pointer;
             font-size: 0.8rem;
             margin-bottom: 1rem;
+            margin-right: 0.5rem;
+        }
+
+        .focus-btn {
+            background: #1e293b;
         }
 
         .about-content {
@@ -192,6 +197,13 @@
             color: #9ab3d5;
         }
 
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
         footer {
             padding: 1rem 2rem;
             text-align: center;
@@ -214,7 +226,7 @@
     <div class="header">
         <div class="header-left">
             <h1>Eaglercraft · Arcade Nexus</h1>
-            <div class="sub">Minecraft 1.8.8 · fullscreen supported</div>
+            <div class="sub">Minecraft 1.8.8 · click game to start typing</div>
         </div>
     </div>
 
@@ -229,11 +241,17 @@
     </div>
 
     <div id="gameTab" class="tab-content active">
-        <button id="fullscreenBtn" class="fullscreen-btn">Enter Fullscreen</button>
+        <div class="button-group">
+            <button id="fullscreenBtn" class="fullscreen-btn">Enter Fullscreen</button>
+            <button id="focusBtn" class="fullscreen-btn focus-btn">Click to Focus Game</button>
+        </div>
         <div class="game-container" id="gameContainer">
             <div id="loadingMsg" class="loading">Click "Load Game" to fetch and play Eaglercraft</div>
-            <iframe id="gameFrame" class="game-frame" src="about:blank" style="display:none;"></iframe>
+            <iframe id="gameFrame" class="game-frame" src="about:blank" style="display:none;" tabindex="0"></iframe>
         </div>
+        <p style="color:#6a86b3; font-size:0.7rem; margin-top:0.5rem; text-align:center;">
+            💡 Tip: Click the game area first, then press any key to start playing
+        </p>
     </div>
 
     <div id="aboutTab" class="tab-content">
@@ -241,7 +259,7 @@
             <h3>About Eaglercraft</h3>
             <p>Minecraft 1.8.8 that runs in your browser. No downloads needed. Singleplayer and multiplayer supported.</p>
             <p>Controls: WASD / Arrow Keys · Space to jump · E to open inventory · Left click to mine</p>
-            <p>The game fetches from the raw GitHub URL you provide. Make sure the URL points to a valid Eaglercraft HTML file.</p>
+            <p>If typing doesn't work: Click inside the game window first to focus it, then press any key.</p>
         </div>
     </div>
 
@@ -288,6 +306,7 @@
     const loadBtn = document.getElementById('loadBtn');
     const gameFrame = document.getElementById('gameFrame');
     const loadingMsg = document.getElementById('loadingMsg');
+    const focusBtn = document.getElementById('focusBtn');
 
     async function loadEaglercraft() {
         let url = rawUrlInput.value.trim();
@@ -310,14 +329,41 @@
             gameFrame.style.display = 'block';
             loadingMsg.style.display = 'none';
             
+            // Auto-focus the iframe after loading
+            setTimeout(() => {
+                gameFrame.focus();
+                // Try to focus the iframe's contentWindow
+                try {
+                    if (gameFrame.contentWindow) {
+                        gameFrame.contentWindow.focus();
+                    }
+                } catch(e) {}
+            }, 1000);
+            
         } catch (error) {
             loadingMsg.innerHTML = `Error loading: ${error.message}<br><br>Make sure the URL is correct and the file is accessible.<br>Current URL: ${url}`;
         }
     }
 
+    // Focus button - manually focus the iframe
+    focusBtn.addEventListener('click', () => {
+        gameFrame.focus();
+        try {
+            if (gameFrame.contentWindow) {
+                gameFrame.contentWindow.focus();
+            }
+        } catch(e) {}
+        loadingMsg.innerHTML = 'Game focused! Try pressing WASD or arrow keys.';
+        setTimeout(() => {
+            if (loadingMsg.innerHTML === 'Game focused! Try pressing WASD or arrow keys.') {
+                loadingMsg.style.display = 'none';
+            }
+        }, 2000);
+    });
+
     loadBtn.addEventListener('click', loadEaglercraft);
     
-    // Auto-load on page open (optional)
+    // Auto-load on page open
     setTimeout(() => {
         if (rawUrlInput.value) loadEaglercraft();
     }, 500);
