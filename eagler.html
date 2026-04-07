@@ -50,7 +50,7 @@
         }
 
         .header-left h1::before {
-            content: "⛏️";
+            content: "Eaglercraft";
             font-size: 2rem;
             background: none;
             color: #3b82f6;
@@ -276,7 +276,6 @@
         <button class="tab-btn" data-tab="about">About</button>
     </div>
 
-    <!-- Game Tab -->
     <div id="gameTab" class="tab-content active">
         <div class="button-group">
             <button id="fullscreenBtn" class="fullscreen-btn">Enter Fullscreen</button>
@@ -291,7 +290,6 @@
         </p>
     </div>
 
-    <!-- GitHub Tab -->
     <div id="githubTab" class="tab-content">
         <div class="profile-card">
             <div class="profile-header">
@@ -312,7 +310,6 @@
         </div>
     </div>
 
-    <!-- About Tab -->
     <div id="aboutTab" class="tab-content">
         <div class="profile-card">
             <h3 style="color:#c0e0ff; margin-bottom: 1rem;">About Eaglercraft</h3>
@@ -326,7 +323,6 @@
 </div>
 
 <script>
-    // Tab switching
     const tabs = document.querySelectorAll('.tab-btn');
     const gameTab = document.getElementById('gameTab');
     const githubTab = document.getElementById('githubTab');
@@ -354,7 +350,6 @@
         });
     });
 
-    // Fullscreen
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     const gameContainer = document.getElementById('gameContainer');
 
@@ -372,7 +367,6 @@
         fullscreenBtn.textContent = document.fullscreenElement ? 'Exit Fullscreen' : 'Enter Fullscreen';
     });
 
-    // AUTO LOAD EAGLERCRAFT - No button needed
     const gameFrame = document.getElementById('gameFrame');
     const loadingMsg = document.getElementById('loadingMsg');
     const focusBtn = document.getElementById('focusBtn');
@@ -423,10 +417,8 @@
         }, 2000);
     });
 
-    // AUTO LOAD on page open
     autoLoadEaglercraft();
 
-    // Fetch GitHub repositories automatically
     async function fetchGitHubRepos() {
         const repoContainer = document.getElementById('repoContainer');
         try {
