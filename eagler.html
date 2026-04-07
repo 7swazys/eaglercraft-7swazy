@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Eaglercraft · Arcade Nexus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
+            font-family: 'Inter', system-ui, monospace;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .glass-card {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(18, 25, 45, 0.75);
+            backdrop-filter: blur(14px);
+            border-radius: 2.5rem;
+            border: 1px solid rgba(72, 187, 255, 0.25);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 1.75rem 2rem;
+            background: rgba(12, 18, 34, 0.7);
+            border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-left h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #c0e0ff, #3b82f6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .header-left h1::before {
+            content: "⛏️";
+            font-size: 2rem;
+            background: none;
+            color: #3b82f6;
+        }
+
+        .sub {
+            color: #9ab3d5;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            border-left: 3px solid #3b82f6;
+            padding-left: 0.85rem;
+        }
+
+        .url-input-bar {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid #26324a;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .url-input-bar input {
+            flex: 1;
+            background: #0f1422;
+            border: 1px solid #26324a;
+            border-radius: 2rem;
+            padding: 0.6rem 1rem;
+            color: white;
+            outline: none;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .url-input-bar button {
+            background: linear-gradient(100deg, #2563eb, #1e40af);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid #26324a;
+            gap: 0.25rem;
+            padding: 0 1.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #8caee0;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            color: white;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .tab-btn.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .game-container {
+            background: #0a0f1a;
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-frame {
+            width: 100%;
+            height: 70vh;
+            border: none;
+            background: #1a1a2e;
+        }
+
+        .fullscreen-btn {
+            background: linear-gradient(100deg, #2563eb, #1e40af);
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-content {
+            background: rgba(12, 18, 34, 0.6);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #26324a;
+            max-width: 800px;
+        }
+
+        .about-content h3 {
+            color: #c0e0ff;
+            margin-bottom: 1rem;
+        }
+
+        .about-content p {
+            color: #9ab3d5;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #9ab3d5;
+        }
+
+        footer {
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #4c6188;
+            border-top: 1px solid rgba(72, 120, 184, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 700px) {
+            .header { flex-direction: column; align-items: start; }
+            .tab-btn { padding: 0.7rem 1rem; }
+            .tab-content { padding: 1rem; }
+            .game-frame { height: 55vh; }
+        }
+    </style>
+</head>
+<body>
+<div class="glass-card">
+    <div class="header">
+        <div class="header-left">
+            <h1>Eaglercraft · Arcade Nexus</h1>
+            <div class="sub">Minecraft 1.8.8 · fullscreen supported</div>
+        </div>
+    </div>
+
+    <div class="url-input-bar">
+        <input type="text" id="rawUrlInput" placeholder="Eaglercraft Raw URL" value="https://raw.githubusercontent.com/svaaps/eaglercrafthtml/refs/heads/main/index.html">
+        <button id="loadBtn">Load Game</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="game">Play Game</button>
+        <button class="tab-btn" data-tab="about">About</button>
+    </div>
+
+    <div id="gameTab" class="tab-content active">
+        <button id="fullscreenBtn" class="fullscreen-btn">Enter Fullscreen</button>
+        <div class="game-container" id="gameContainer">
+            <div id="loadingMsg" class="loading">Click "Load Game" to fetch and play Eaglercraft</div>
+            <iframe id="gameFrame" class="game-frame" src="about:blank" style="display:none;"></iframe>
+        </div>
+    </div>
+
+    <div id="aboutTab" class="tab-content">
+        <div class="about-content">
+            <h3>About Eaglercraft</h3>
+            <p>Minecraft 1.8.8 that runs in your browser. No downloads needed. Singleplayer and multiplayer supported.</p>
+            <p>Controls: WASD / Arrow Keys · Space to jump · E to open inventory · Left click to mine</p>
+            <p>The game fetches from the raw GitHub URL you provide. Make sure the URL points to a valid Eaglercraft HTML file.</p>
+        </div>
+    </div>
+
+    <footer>Eaglercraft is not affiliated with Mojang</footer>
+</div>
+
+<script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab-btn');
+    const gameTab = document.getElementById('gameTab');
+    const aboutTab = document.getElementById('aboutTab');
+
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            gameTab.classList.remove('active');
+            aboutTab.classList.remove('active');
+            if (btn.getAttribute('data-tab') === 'game') gameTab.classList.add('active');
+            else aboutTab.classList.add('active');
+        });
+    });
+
+    // Fullscreen
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const gameContainer = document.getElementById('gameContainer');
+
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            gameContainer.requestFullscreen();
+            fullscreenBtn.textContent = 'Exit Fullscreen';
+        } else {
+            document.exitFullscreen();
+            fullscreenBtn.textContent = 'Enter Fullscreen';
+        }
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+        fullscreenBtn.textContent = document.fullscreenElement ? 'Exit Fullscreen' : 'Enter Fullscreen';
+    });
+
+    // Fetch and load Eaglercraft from raw URL
+    const rawUrlInput = document.getElementById('rawUrlInput');
+    const loadBtn = document.getElementById('loadBtn');
+    const gameFrame = document.getElementById('gameFrame');
+    const loadingMsg = document.getElementById('loadingMsg');
+
+    async function loadEaglercraft() {
+        let url = rawUrlInput.value.trim();
+        if (!url) {
+            loadingMsg.innerHTML = 'Please enter a valid URL';
+            return;
+        }
+
+        loadingMsg.style.display = 'block';
+        gameFrame.style.display = 'none';
+        loadingMsg.innerHTML = 'Fetching Eaglercraft from GitHub...<br>This may take a moment (the file is ~15MB)';
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const htmlContent = await response.text();
+            
+            gameFrame.srcdoc = htmlContent;
+            gameFrame.style.display = 'block';
+            loadingMsg.style.display = 'none';
+            
+        } catch (error) {
+            loadingMsg.innerHTML = `Error loading: ${error.message}<br><br>Make sure the URL is correct and the file is accessible.<br>Current URL: ${url}`;
+        }
+    }
+
+    loadBtn.addEventListener('click', loadEaglercraft);
+    
+    // Auto-load on page open (optional)
+    setTimeout(() => {
+        if (rawUrlInput.value) loadEaglercraft();
+    }, 500);
+</script>
+</body>
+</html>
